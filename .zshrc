@@ -10,7 +10,6 @@ PROMPT="
 #
 alias ls="ls -G"
 alias gls="gls --color"
-alias ojt='oj t -c "python main.py" -d ./tests/'
 
 
 # 確認する
@@ -27,10 +26,25 @@ function start () {
     cd $1
 }
 
+function cstart() {
+    acc new $1 --template cpp
+    source cd $1
+
+    # code -r $1
+    #source cd $1/a
+    # code -r main.cpp
+}
+
 # online-judge-tools によるテスト
 # 引数にa, bなどの問題名を与える
+# python用
 function test () {
     oj t -c "python ./$1/main.py" -d $1/tests/
+}
+# cpp用
+function ojt () {
+    #oj t -c "cpp ./$1/main.cpp" -d $1/tests/
+    g++ ./$1/main.cpp && oj t -d $1/tests/
 }
 
 # Atcoder-cli による自動提出
@@ -44,7 +58,13 @@ function submit () {
     cd ..
 }
 
-
+function sub () {
+    cd $1
+    problem=`pwd | xargs basename`
+    contest=`echo $(basename $(pwd | xargs dirname)) | tr '[:upper:]' '[:lower:]'`
+    echo "${contest:0:3}$problem" | acc s main.cpp
+    cd ..
+}
 
 
 # C で標準出力をクリップボードにコピーする
@@ -75,6 +95,7 @@ HISTFILE=~/.zsh_history
 HISTSIZE=20000
 SAVEHIST=20000
 setopt hist_ignore_dups     # ignore duplication command history list
+setopt hist_ignore_all_dups
 setopt share_history        # share command history data 
 
 
@@ -212,3 +233,19 @@ source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 [[ -d ~/.rbenv  ]] && \
   export PATH=${HOME}/.rbenv/bin:${PATH} && \
     eval "$(rbenv init -)"
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/hiko/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/hiko/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/hiko/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/hiko/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
