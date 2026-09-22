@@ -18,7 +18,7 @@ export PATH="$HOME/.local/bin:$PATH"
 ## Zsh 基本設定・補完
 ## ---------------------------------------------------
 autoload -Uz colors && colors
-autoload -Uz compinit && compinit
+autoload -Uz compinit && compinit -u
 
 # 補完時の色設定と大文字・小文字の不区別
 export LSCOLORS=exfxcxdxbxegedabagacad
@@ -60,7 +60,7 @@ zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
 zstyle ':vcs_info:git:*' formats "%F{green}[%b]%u%c%f"
 zstyle ':vcs_info:git:*' actionformats "%F{red}(%a)|[%b]%f"
 
-# 左プロンプト（慣れ親しんだカラープロンプト）
+# 左プロンプト
 PROMPT="%{$fg[blue]%}%/%{$reset_color%}%{$fg[red]%} >%{$reset_color%}%{$fg[yellow]%}>%{$reset_color%}%{$fg[green]%}> %{$reset_color%}"
 
 # 右プロンプト（Gitブランチ名を表示）
@@ -80,13 +80,10 @@ alias rm='rm -i'
 
 # クリップボード連携グローバルエイリアス (Mac/Linux自動分岐)
 if command -v pbcopy >/dev/null 2>&1; then
-    # Mac
     alias -g C='| pbcopy'
 elif command -v wl-copy >/dev/null 2>&1; then
-    # Linux (Wayland)
     alias -g C='| wl-copy'
 elif command -v xsel >/dev/null 2>&1; then
-    # Linux (X11)
     alias -g C='| xsel --input --clipboard'
 fi
 
@@ -97,9 +94,9 @@ fi
 function select-history() {
     local BUFFER_CMD
     if command -v fzf >/dev/null 2>&1; then
-        BUFFER_CMD=$(history -n 1 | tail -r | fzf --query "$LBUFFER")
+        BUFFER_CMD=$(history -n 1 | tail -r 2>/dev/null || history -n 1 | tac 2>/dev/null | fzf --query "$LBUFFER")
     elif command -v peco >/dev/null 2>&1; then
-        BUFFER_CMD=$(history -n 1 | tail -r | peco --query "$LBUFFER")
+        BUFFER_CMD=$(history -n 1 | tail -r 2>/dev/null || history -n 1 | tac 2>/dev/null | peco --query "$LBUFFER")
     fi
 
     if [ -n "$BUFFER_CMD" ]; then
@@ -113,69 +110,12 @@ bindkey '^r' select-history
 
 
 ## ---------------------------------------------------
-## Atcoder 用 Function群
-## ---------------------------------------------------
-# contest 開始時にディレクトリ等を作成する
-function start () {
-    acc new "$1"
-    cd "$1"
-}
-
-function cstart() {
-    acc new "$1" --template cpp
-    cd "$1"
-}
-
-# online-judge-tools によるテスト (python用)
-function test () {
-    if command -v uv >/dev/null 2>&1; then
-        oj t -c "uv run python ./$1/main.py" -d "$1/tests/"
-    else
-        oj t -c "python ./$1/main.py" -d "$1/tests/"
-    fi
-}
-
-# cpp用テスト
-function ojt () {
-    g++ -std=c++17 ./$1/main.cpp && oj t -d "$1/tests/"
-}
-
-# Atcoder-cli による自動提出
-function submit () {
-    cd "$1" || return
-    local problem=$(basename "$(pwd)")
-    local contest=$(basename "$(dirname "$(pwd)")" | tr '[:upper:]' '[:lower:]')
-    echo "${contest:0:3}$problem" | acc s
-    cd ..
-}
-
-function sub () {
-    cd "$1" || return
-    local problem=$(basename "$(pwd)")
-    local contest=$(basename "$(dirname "$(pwd)")" | tr '[:upper:]' '[:lower:]')
-    echo "${contest:0:3}$problem" | acc s main.cpp
-    cd ..
-}
-
-
-## ---------------------------------------------------
 ## 外部ツール・言語補完の設定
 ## ---------------------------------------------------
 # uv のシェル補完を読み込み
 if command -v uv >/dev/null 2>&1; then
     eval "$(uv generate-shell-completion zsh)"
     eval "$(uvx --generate-shell-completion zsh)"
-fi
-
-# NVM (Node.js) の読み込み
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
-# rbenv (Ruby) の読み込み
-if [[ -d ~/.rbenv ]]; then
-    export PATH="${HOME}/.rbenv/bin:${PATH}"
-    eval "$(rbenv init -)"
 fi
 
 # zsh-syntax-highlighting (各環境のインストールパスに対応)
