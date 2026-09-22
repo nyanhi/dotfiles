@@ -18,8 +18,6 @@ if [ "$OS_TYPE" = "Linux" ]; then
         tmux \
         vim \
         zsh \
-        nodejs \
-        npm \
         xclip
 
     # zsh をデフォルトシェルに変更
