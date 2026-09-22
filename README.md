@@ -11,7 +11,7 @@ macOS (Intel / Apple Silicon) および Ubuntu 環境で共有・使用するDot
 
 ```bash
 # 1. リポジトリのクローン
-git clone [https://github.com/](https://github.com/)<YOUR_GITHUB_USERNAME>/dotfiles.git ~/.dotfiles
+git clone https://github.com/nyanhi/dotfiles.git ~/.dotfiles
 
 # 2. ディレクトリへ移動
 cd ~/.dotfiles
