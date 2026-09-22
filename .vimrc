@@ -2,8 +2,9 @@
 " 基本・エンコーディング設定
 "---------------------------------------------------
 set encoding=utf-8
-set fileencodings=utf-8,iso-2022-jp,euc-jp,cp932
 scriptencoding=utf-8
+
+set fileencodings=utf-8,iso-2022-jp,euc-jp,cp932
 
 "---------------------------------------------------
 " 見た目・表示設定
