@@ -6,7 +6,7 @@ export LANG=ja_JP.UTF-8
 # Homebrew PATH (Intel Mac / Apple Silicon Mac 自動判定)
 if [[ -d /opt/homebrew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [[ -d /usr/local ]]; then
+elif [[ -d /usr/local/bin/brew ]]; then
     eval "$(/usr/local/bin/brew shellenv)"
 fi
 
